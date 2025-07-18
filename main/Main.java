@@ -2,6 +2,9 @@ package main;
 
 import model.*;
 import manager.UnifiedJournalManager;
+import services.BalanceCalculator;
+import services.ReportPrinter;
+import services.TrialBalanceCalculator;
 import utils.InputValidator;
 
 import java.time.LocalDate;
@@ -19,6 +22,7 @@ public class Main {
             System.out.println("1. ➕ Add Entry");
             System.out.println("2. 📘 Display All Entries");
             System.out.println("3. 🔍 Filter by Status + Creator + Min Amount");
+            System.out.println("4. 🧾 Generate Trial Balance Report");
             System.out.println("0. ❌ Exit");
 
             System.out.print("👉 Choose an option: ");
@@ -99,6 +103,13 @@ public class Main {
 
                 case 3:
                     manager.filterByMultipleCriteria(scanner);
+                    break;
+
+                case 4:
+                    System.out.println("🧾 Generating Trial Balance Report...");
+                    BalanceCalculator calc = new TrialBalanceCalculator();
+                    ReportPrinter printer = new ReportPrinter(calc);
+                    printer.printReport(entries);
                     break;
 
                 case 0:
