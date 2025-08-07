@@ -41,7 +41,7 @@ public class JournalEntry {
 
     // 🧮 Returns the total amount (debit + credit)
     public double getAmount() {
-        return debitTransaction.getAmount() + creditTransaction.getAmount();
+        return debitTransaction.getAmount(); // same as credit
     }
 
     // 🔍 Getters (to access private fields)

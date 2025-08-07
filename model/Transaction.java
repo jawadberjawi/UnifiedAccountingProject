@@ -24,4 +24,6 @@ public abstract class Transaction {
 
     // 🔹 Abstract method to be implemented by child classes
     public abstract void display();
+
 }
+

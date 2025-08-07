@@ -5,7 +5,7 @@ import manager.UnifiedJournalManager;
 import services.BalanceCalculator;
 import services.ReportPrinter;
 import services.TrialBalanceCalculator;
-import services.LedgerManager;
+import services.GeneralLedger;
 import utils.InputValidator;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<JournalEntry> entries = new ArrayList<>();
         UnifiedJournalManager manager = new UnifiedJournalManager(entries);
-        LedgerManager ledgerManager = new LedgerManager();
+        GeneralLedger generalLedger = new GeneralLedger();
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -37,7 +37,10 @@ public class Main {
                     generateTrialBalanceReport(entries);
                     break;
                 case 5:
-                    generateLedgerReport(entries, ledgerManager);
+                    generateGeneralLedgerReport(entries, generalLedger);
+                    break;
+                case 6:
+                    viewSingleAccountLedger(entries, generalLedger, scanner);
                     break;
                 case 0:
                     System.out.println("\uD83D\uDC4B Exiting... Goodbye!");
@@ -54,7 +57,8 @@ public class Main {
         System.out.println("2. 📘 Display All Entries");
         System.out.println("3. 🔍 Filter by Status + Creator + Min Amount");
         System.out.println("4. 🧾 Generate Trial Balance Report");
-        System.out.println("5. 📒 Generate Ledger Report");
+        System.out.println("5. 📒 Generate General Ledger (all accounts)");
+        System.out.println("6. 📄 View Single Account Ledger");
         System.out.println("0. ❌ Exit");
     }
 
@@ -145,9 +149,16 @@ public class Main {
         printer.printReport(entries);
     }
 
-    private static void generateLedgerReport(ArrayList<JournalEntry> entries, LedgerManager ledgerManager) {
-        ledgerManager.groupEntries(entries);
-        ledgerManager.displayLedger();
+    private static void generateGeneralLedgerReport(ArrayList<JournalEntry> entries, GeneralLedger generalLedger) {
+        System.out.println("📒 Generating General Ledger...");
+        generalLedger.build(entries);
+        generalLedger.printAll();
+    }
+
+    private static void viewSingleAccountLedger(ArrayList<JournalEntry> entries, GeneralLedger generalLedger, Scanner scanner) {
+        generalLedger.build(entries);
+        System.out.print("🔎 Enter account name: ");
+        String account = scanner.nextLine().trim();
+        generalLedger.printAccount(account);
     }
 }
-
