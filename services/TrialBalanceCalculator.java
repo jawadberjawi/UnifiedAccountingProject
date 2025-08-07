@@ -1,52 +1,52 @@
-//📄 OOP: Implements Interface + Encapsulation + SRP
-
 package services;
 
 import model.JournalEntry;
 import java.util.List;
 
 /**
- * 🔹 OOP: Implements BalanceCalculator → Polymorphism
- * 🔹 Uses private fields → Encapsulation
- * 🔹 One clear responsibility: calculate and display trial balance → SRP
+ * TrialBalanceCalculator implements BalanceCalculator interface.
+ * It calculates and displays total debit and credit for approved entries,
+ * and checks whether the journal is balanced.
  */
 public class TrialBalanceCalculator implements BalanceCalculator {
-    private double totalDebit;
-    private double totalCredit;
+    private double debitTotal;
+    private double creditTotal;
 
+    // 🔢 Calculate total debit and credit for approved entries
     @Override
     public void calculate(List<JournalEntry> entries) {
-        totalDebit = 0.0;
-        totalCredit = 0.0;
+        debitTotal = 0.0;
+        creditTotal = 0.0;
 
         for (JournalEntry entry : entries) {
             if ("approved".equalsIgnoreCase(entry.getStatus())) {
-                totalDebit += entry.getDebitTransaction().getAmount();
-                totalCredit += entry.getCreditTransaction().getAmount();
+                debitTotal += entry.getDebitTransaction().getAmount();
+                creditTotal += entry.getCreditTransaction().getAmount();
             }
         }
     }
 
+    // 📊 Display the results of the trial balance
     @Override
     public void displayResult() {
-        System.out.println("\n📊 Trial Balance Report:");
-        System.out.println("--------------------------");
-        System.out.println("Total Debit  : " + totalDebit);
-        System.out.println("Total Credit : " + totalCredit);
+        System.out.printf("Total Debit  : %.2f%n", debitTotal);
+        System.out.printf("Total Credit : %.2f%n", creditTotal);
 
         if (isBalanced()) {
-            System.out.println("✅ Balanced. Good job!");
+            System.out.println("✅ Balanced.");
         } else {
-            System.out.printf("❌ Not balanced! Difference: %.2f\n", getDifference());
+            System.out.printf("❌ Not balanced. Difference: %.2f%n", getDifference());
         }
     }
 
+    // ✅ Check if totals are equal
     @Override
     public boolean isBalanced() {
-        return totalDebit == totalCredit;
+        return debitTotal == creditTotal;
     }
 
+    // 🔁 Calculate the difference between totals
     public double getDifference() {
-        return Math.abs(totalDebit - totalCredit);
+        return Math.abs(debitTotal - creditTotal);
     }
 }

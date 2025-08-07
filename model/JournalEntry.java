@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDate;
 
+// 🔹 Represents one full journal entry (debit + credit)
 public class JournalEntry {
 
     // 🔐 Fields (Encapsulation)
@@ -9,44 +10,41 @@ public class JournalEntry {
     private LocalDate date;
     private String createdBy;
     private String status;
-
     private DebitTransaction debitTransaction;
     private CreditTransaction creditTransaction;
 
-    // ✅ Constructor to initialize all fields
+    // ✅ Constructor sets all values
     public JournalEntry(String transactionID, LocalDate date,
-                        DebitTransaction debitTransaction, CreditTransaction creditTransaction,
+                        DebitTransaction debitTransaction,
+                        CreditTransaction creditTransaction,
                         String createdBy, String status) {
         this.transactionID = transactionID;
         this.date = date;
-        this.debitTransaction = debitTransaction;
-        this.creditTransaction = creditTransaction;
         this.createdBy = createdBy;
         this.status = status;
+        this.debitTransaction = debitTransaction;
+        this.creditTransaction = creditTransaction;
     }
 
-    // 📄 Display full entry details
+    // 📄 Shows the full journal entry details
     public void display() {
-        System.out.println("📄 Transaction ID: " + transactionID);
-        System.out.println("📅 Date: " + date);
-        System.out.println("👤 Created By: " + createdBy);
-        System.out.println("✅ Status: " + status);
-
+        System.out.println("Transaction ID : " + transactionID);
+        System.out.println("Date           : " + date);
+        System.out.println("Created By     : " + createdBy);
+        System.out.println("Status         : " + status);
         System.out.println("----- Debit Entry -----");
         debitTransaction.display();
-
         System.out.println("----- Credit Entry -----");
         creditTransaction.display();
-
-        System.out.println("====================================");
+        System.out.println("===============================");
     }
 
-    // 🧮 Get total amount from debit and credit combined
+    // 🧮 Returns the total amount (debit + credit)
     public double getAmount() {
         return debitTransaction.getAmount() + creditTransaction.getAmount();
     }
 
-    // 🔍 Getters (Encapsulation - read access only)
+    // 🔍 Getters (to access private fields)
     public String getTransactionID() {
         return transactionID;
     }
@@ -69,5 +67,16 @@ public class JournalEntry {
 
     public CreditTransaction getCreditTransaction() {
         return creditTransaction;
+    }
+
+    // 🔎 Optional: Return one account name (for display/filtering)
+    public String getAccountName() {
+        if (debitTransaction != null) {
+            return debitTransaction.getAccountName();
+        } else if (creditTransaction != null) {
+            return creditTransaction.getAccountName();
+        } else {
+            return "Unknown";
+        }
     }
 }

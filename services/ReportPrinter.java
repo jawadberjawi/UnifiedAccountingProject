@@ -1,8 +1,7 @@
-//📄 OOP: Dependency Injection + SRP + Open/Closed Principle
-
 package services;
-import model.JournalEntry;
+
 import java.util.List;
+import model.JournalEntry;
 
 /**
  * 🔹 OOP: Uses interface reference → Polymorphism
@@ -11,12 +10,15 @@ import java.util.List;
  * 🔹 Supports any calculator → Open/Closed Principle
  */
 public class ReportPrinter {
+
     private BalanceCalculator calculator;
 
+    // ✅ Constructor with dependency injection
     public ReportPrinter(BalanceCalculator calculator) {
         this.calculator = calculator;
     }
 
+    // ✅ Method to trigger the report logic
     public void printReport(List<JournalEntry> entries) {
         calculator.calculate(entries);
         calculator.displayResult();
