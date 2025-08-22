@@ -1,0 +1,15 @@
+         # Ignore build output
+         /out/
+         build/
+         target/
+
+         # IntelliJ IDEA
+         .idea/
+         *.iml
+
+         # Logs
+         *.log
+
+         # OS files
+         .DS_Store
+         Thumbs.db
