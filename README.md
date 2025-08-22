@@ -118,8 +118,8 @@ public interface BalanceCalculator {
 ## 📎 Author
 
 **Jawad Berjawi**  
-GitHub: [jawadberjawi](https://github.com/jawadberjawi)  
-LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/jawad-berjawi-8558ab370)
+GitHub: https://github.com/jawadberjawi 
+LinkedIn:https://www.linkedin.com/in/jawad-berjawi-8558ab370
 
 ---
 
