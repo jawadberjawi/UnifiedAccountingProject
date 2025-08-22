@@ -1,7 +1,7 @@
 # 🧾 Java Accounting System – Double Entry Journal (OOP Project)
 
 This is a beginner-to-intermediate Java project that simulates a simple **double-entry accounting system**.  
-It allows users to create, view, filter, and print trial balances using solid Object-Oriented Programming (OOP) principles.
+It allows users to create, view, filter, and print financial reports using solid Object-Oriented Programming (OOP) principles.
 
 ---
 
@@ -14,9 +14,10 @@ It allows users to create, view, filter, and print trial balances using solid Ob
   - Creator
   - Minimum Amount
 - ✅ Display all entries clearly
-- ✅ Calculate and print Trial Balance with totals
+- ✅ Calculate and print **Trial Balance** with totals
 - ✅ Check if system is balanced (debit = credit)
-- ✅ Display Ledger view grouped by account ✅
+- ✅ **General Ledger with running balances** (grouped by account, sorted by date)
+- ✅ **View a single account’s ledger** (drill-down)
 - ✅ Menu-based console UI
 
 ---
@@ -33,68 +34,54 @@ It allows users to create, view, filter, and print trial balances using solid Ob
 
 | Principle        | Description                                                                 |
 |------------------|-----------------------------------------------------------------------------|
-| **Abstraction**  | `BalanceCalculator` is an interface (contract) implemented by `TrialBalanceCalculator` |
-| **Inheritance**  | `DebitTransaction` and `CreditTransaction` inherit from the abstract class `Transaction` |
-| **Encapsulation**| All fields in model classes are private, accessed via getters/setters         |
-| **Polymorphism** | `display()` method is overridden in `DebitTransaction` and `CreditTransaction` |
+| **Abstraction**  | `BalanceCalculator` is an interface implemented by `TrialBalanceCalculator` |
+| **Inheritance**  | `DebitTransaction` and `CreditTransaction` inherit from `Transaction`       |
+| **Encapsulation**| Model fields are private with getters/setters                                |
+| **Polymorphism** | Calculators can be swapped via the `BalanceCalculator` interface            |
 
 ---
 
-## 📘 LedgerManager – New Feature
+## 📘 GeneralLedger – New Feature (Running Balances)
 
-This class is responsible for **grouping and displaying journal entries by account**.
+`GeneralLedger` builds a ledger per account, **sorts by date**, and computes a **running balance** line-by-line.
 
 ### 🔹 What it does:
-- Groups all journal entries by account name (case-insensitive)
-- Displays each account separately with:
-  - Date
-  - Debit amount (if exists)
-  - Credit amount (if exists)
-- Aligns numbers using fixed width formatting
+- Expands each `JournalEntry` to the affected accounts (debit = +, credit = −)
+- Groups by account and sorts by date (stable tiebreak by transaction ID)
+- Prints **Debit / Credit / Balance** per line with neat column widths
+- Shows **Totals** and the **final (closing) balance** for each account
+- Supports:
+  - `printAll()` – all accounts
+  - `printAccount("Cash")` – a single account
+  - `getAccounts()` – list accounts
+  - `getFinalBalance("Cash")` – closing balance
 
 ### ✅ Example Output:
-```
 Account: Cash
-Date       | Debit     | Credit
--------------------------------
-2025-07-07 |    500.0  |         
-2025-07-07 |           |   200.0
+Date       | Debit        | Credit       | Balance
+---------------------------------------------------
+2025-07-07 |       500.00 |              |     500.00
+2025-07-07 |              |      200.00  |     300.00
+---------------------------------------------------
+Totals     |       500.00 |      200.00  |     300.00
 
-Account: Sales
-Date       | Debit     | Credit
--------------------------------
-2025-07-07 |           |   500.0
-2025-07-07 |           |   500.0
-```
-
-### 🧩 Design Highlights:
-- Uses `Map<String, List<JournalEntry>>` for grouping
-- Utilizes `computeIfAbsent()` for clean code
-- Normalizes account names with `.toLowerCase()` to avoid duplicates like `Cash` vs `cash`
-- Supports future extension (like PDF export or totals per account)
+> Tip: You can also drill down to a single account from the menu.
 
 ---
 
-## 🧱 Interface: `BalanceCalculator`
+## 🧱 Interface: BalanceCalculator
 
-```java
 // 📄 OOP Concept: Abstraction
 package services;
 
 import model.JournalEntry;
 import java.util.List;
 
-/**
- * 🔹 OOP: Interface → Abstraction
- * This interface defines a "contract" for all balance calculators.
- * Any class that implements this must provide these 3 methods.
- */
 public interface BalanceCalculator {
-    void calculate(List<JournalEntry> entries);   // Calculate totals
-    void displayResult();                         // Print result to user
-    boolean isBalanced();                         // Check if debit == credit
+void calculate(List<JournalEntry> entries);
+void displayResult();
+boolean isBalanced();
 }
-```
 
 ---
 
@@ -107,26 +94,26 @@ public interface BalanceCalculator {
 | `Transaction`            | Abstract class for shared debit/credit behavior                             |
 | `DebitTransaction`       | Inherits from `Transaction`, represents debit side                          |
 | `CreditTransaction`      | Inherits from `Transaction`, represents credit side                         |
-| `UnifiedJournalManager`  | Handles storing, displaying, and filtering journal entries                  |
-| `LedgerManager`          | Groups and displays entries by account in a ledger view ✅                  |
+| `UnifiedJournalManager`  | Stores, displays, and filters journal entries                               |
+| `GeneralLedger`          | **Builds and prints ledger with running balances**                          |
 | `InputValidator`         | Validates all user input                                                    |
 | `BalanceCalculator`      | Interface defining trial balance contract (abstraction)                     |
-| `TrialBalanceCalculator` | Implements balance logic for trial balance (calculate + display + check)    |
+| `TrialBalanceCalculator` | Implements balance logic for trial balance                                  |
 | `ReportPrinter`          | Prints the trial balance using any `BalanceCalculator` implementation       |
+| `LedgerManager` (legacy) | Old, simple grouped view (kept for reference; not used by `Main`)           |
 
 ---
 
 ## 🧪 Sample Menu (Console)
 
-```text
 📋 Journal Entry System
 1. ➕ Add Entry
 2. 📘 Display All Entries
 3. 🔍 Filter by Status + Creator + Min Amount
 4. 🧾 Generate Trial Balance Report
-5. 📒 Generate Ledger Report ✅
+5. 📒 Generate General Ledger (all accounts)
+6. 📄 View Single Account Ledger
 0. ❌ Exit
-```
 
 ---
 
@@ -138,7 +125,7 @@ LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/jawad-berjawi-8558ab370
 
 ---
 
-## ✅ Status
+### ✅ Status
 
-This project is part of a larger **Java Accounting System** that is being built over 12 weeks, step-by-step.  
-It will evolve into a full portfolio-ready backend system using **Spring Boot**, **SQL**, and clean architecture.
+This project is part of a larger **Java Accounting System** being built step-by-step.  
+Next phases: **Spring Boot**, **SQL (PostgreSQL + H2)**, REST APIs, clean architecture, and basic tests.
