@@ -56,7 +56,9 @@ It allows users to create, view, filter, and print financial reports using solid
   - `getAccounts()` – list accounts
   - `getFinalBalance("Cash")` – closing balance
 
-### ✅ Example Output:
+### ✅ Example Output
+
+```text
 Account: Cash
 Date       | Debit        | Credit       | Balance
 ---------------------------------------------------
@@ -65,11 +67,7 @@ Date       | Debit        | Credit       | Balance
 ---------------------------------------------------
 Totals     |       500.00 |      200.00  |     300.00
 
-> Tip: You can also drill down to a single account from the menu.
-
 ---
-
-## 🧱 Interface: BalanceCalculator
 
 // 📄 OOP Concept: Abstraction
 package services;
@@ -78,9 +76,9 @@ import model.JournalEntry;
 import java.util.List;
 
 public interface BalanceCalculator {
-void calculate(List<JournalEntry> entries);
-void displayResult();
-boolean isBalanced();
+    void calculate(List<JournalEntry> entries);
+    void displayResult();
+    boolean isBalanced();
 }
 
 ---
