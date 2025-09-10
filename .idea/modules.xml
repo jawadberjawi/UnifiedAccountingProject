@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/UnifiedAccountingProject.iml" filepath="$PROJECT_DIR$/.idea/UnifiedAccountingProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UnifiedAccountingProject.iml" filepath="$PROJECT_DIR$/UnifiedAccountingProject.iml" />
     </modules>
   </component>
 </project>

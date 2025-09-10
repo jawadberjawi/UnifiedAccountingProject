@@ -6,10 +6,14 @@ import services.BalanceCalculator;
 import services.ReportPrinter;
 import services.TrialBalanceCalculator;
 import services.GeneralLedger;
+import services.IncomeStatementService;
+import services.IncomeStatementRenderer;
 import utils.InputValidator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -42,6 +46,9 @@ public class Main {
                 case 6:
                     viewSingleAccountLedger(entries, generalLedger, scanner);
                     break;
+                case 7:
+                    generateIncomeStatementReport(entries, scanner);
+                    break;
                 case 0:
                     System.out.println("\uD83D\uDC4B Exiting... Goodbye!");
                     return;
@@ -59,6 +66,7 @@ public class Main {
         System.out.println("4. 🧾 Generate Trial Balance Report");
         System.out.println("5. 📒 Generate General Ledger (all accounts)");
         System.out.println("6. 📄 View Single Account Ledger");
+        System.out.println("7. 📈 Generate Income Statement");
         System.out.println("0. ❌ Exit");
     }
 
@@ -160,5 +168,67 @@ public class Main {
         System.out.print("🔎 Enter account name: ");
         String account = scanner.nextLine().trim();
         generalLedger.printAccount(account);
+    }
+
+    // ===============================
+    // Income Statement Integration 👇
+    // ===============================
+
+    private static void generateIncomeStatementReport(ArrayList<JournalEntry> entries, Scanner scanner) {
+        if (entries.isEmpty()) {
+            System.out.println("ℹ️ No journal entries yet. Add some entries first.");
+            return;
+        }
+
+        System.out.println("📈 Generate Income Statement");
+        LocalDate from = askDate(scanner, "From (YYYY-MM-DD)");
+        LocalDate to   = askDate(scanner, "To   (YYYY-MM-DD)");
+
+        if (to.isBefore(from)) {
+            System.out.println("❌ 'To' date cannot be before 'From' date.");
+            return;
+        }
+
+        // Build a simple Chart of Accounts (you can expand this any time)
+        Map<String, AccountType> chart = buildDefaultChart();
+
+        IncomeStatementService svc = new IncomeStatementService(chart);
+        var is = svc.generate(entries, from, to);
+
+        IncomeStatementRenderer.render(is);
+    }
+
+    private static LocalDate askDate(Scanner scanner, String label) {
+        while (true) {
+            System.out.print("📅 Enter " + label + ": ");
+            try {
+                LocalDate date = LocalDate.parse(scanner.nextLine().trim());
+                if (InputValidator.isValidDate(date)) return date;
+                System.out.println("❌ Date cannot be in the future.");
+            } catch (Exception e) {
+                System.out.println("❌ Invalid format. Try again.");
+            }
+        }
+    }
+
+    private static Map<String, AccountType> buildDefaultChart() {
+        Map<String, AccountType> chart = new HashMap<>();
+        // Revenues
+        chart.put("Service Revenue", AccountType.REVENUE);
+        chart.put("Sales Revenue", AccountType.REVENUE);
+        chart.put("Interest Income", AccountType.REVENUE);
+        // Contra-Revenues (reduce revenue)
+        chart.put("Sales Returns", AccountType.CONTRA_REVENUE);
+        chart.put("Sales Allowances", AccountType.CONTRA_REVENUE);
+        chart.put("Sales Discounts", AccountType.CONTRA_REVENUE);
+        // Expenses
+        chart.put("Rent Expense", AccountType.EXPENSE);
+        chart.put("Salaries Expense", AccountType.EXPENSE);
+        chart.put("Utilities Expense", AccountType.EXPENSE);
+        chart.put("Depreciation Expense", AccountType.EXPENSE);
+        chart.put("COGS", AccountType.EXPENSE);
+        chart.put("Cost of Goods Sold", AccountType.EXPENSE);
+        // You can add more here, or rely on the service's inferType() fallbacks
+        return chart;
     }
 }
