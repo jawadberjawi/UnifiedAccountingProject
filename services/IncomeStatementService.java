@@ -107,24 +107,24 @@ public class IncomeStatementService {
             case REVENUE: {
                 // Credit increases revenue (+), Debit decreases (−)
                 BigDecimal signed = isDebit ? amount.negate() : amount;
-                merge(revenueLines, displayName(rawAccount), signed);
+                merge(revenueLines, normalized , signed);
                 break;
             }
             case CONTRA_REVENUE: {
                 // Treat contra-revenue as negative revenue overall
                 BigDecimal signed = isDebit ? amount : amount.negate();
-                merge(revenueLines, displayName(rawAccount), signed.negate()); // subtract from total revenues
+                merge(revenueLines, normalized, signed.negate()); // subtract from total revenues
                 break;
             }
             case EXPENSE: {
                 // Debit increases expense (+), Credit decreases (−)
                 BigDecimal signed = isDebit ? amount : amount.negate();
-                merge(expenseLines, displayName(rawAccount), signed);
+                merge(expenseLines, normalized, signed);
                 break;
             }
             case OTHER:
             default:
-                unknowns.add(displayName(rawAccount));
+                unknowns.add(normalized);
         }
     }
 

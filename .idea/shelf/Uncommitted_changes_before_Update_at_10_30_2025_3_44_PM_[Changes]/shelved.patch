@@ -1,0 +1,479 @@
+Index: model/JournalEntry.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\nimport java.time.LocalDate;\r\n\r\n// \uD83D\uDD39 Represents one full journal entry (debit + credit)\r\npublic class JournalEntry {\r\n\r\n    // \uD83D\uDD10 Fields (Encapsulation)\r\n    private String transactionID;\r\n    private LocalDate date;\r\n    private String createdBy;\r\n    private String status;\r\n    private DebitTransaction debitTransaction;\r\n    private CreditTransaction creditTransaction;\r\n\r\n    // ✅ Constructor sets all values\r\n    public JournalEntry(String transactionID, LocalDate date,\r\n                        DebitTransaction debitTransaction,\r\n                        CreditTransaction creditTransaction,\r\n                        String createdBy, String status) {\r\n        this.transactionID = transactionID;\r\n        this.date = date;\r\n        this.createdBy = createdBy;\r\n        this.status = status;\r\n        this.debitTransaction = debitTransaction;\r\n        this.creditTransaction = creditTransaction;\r\n    }\r\n\r\n    // \uD83D\uDCC4 Shows the full journal entry details\r\n    public void display() {\r\n        System.out.println(\"Transaction ID : \" + transactionID);\r\n        System.out.println(\"Date           : \" + date);\r\n        System.out.println(\"Created By     : \" + createdBy);\r\n        System.out.println(\"Status         : \" + status);\r\n        System.out.println(\"----- Debit Entry -----\");\r\n        debitTransaction.display();\r\n        System.out.println(\"----- Credit Entry -----\");\r\n        creditTransaction.display();\r\n        System.out.println(\"===============================\");\r\n    }\r\n\r\n    // \uD83E\uDDEE Returns the total amount (debit + credit)\r\n    public double getAmount() {\r\n        return debitTransaction.getAmount(); // same as credit\r\n    }\r\n\r\n    // \uD83D\uDD0D Getters (to access private fields)\r\n    public String getTransactionID() {\r\n        return transactionID;\r\n    }\r\n\r\n    public LocalDate getDate() {\r\n        return date;\r\n    }\r\n\r\n    public String getCreatedBy() {\r\n        return createdBy;\r\n    }\r\n\r\n    public String getStatus() {\r\n        return status;\r\n    }\r\n\r\n    public DebitTransaction getDebitTransaction() {\r\n        return debitTransaction;\r\n    }\r\n\r\n    public CreditTransaction getCreditTransaction() {\r\n        return creditTransaction;\r\n    }\r\n\r\n    // \uD83D\uDD0E Optional: Return one account name (for display/filtering)\r\n    public String getAccountName() {\r\n        if (debitTransaction != null) {\r\n            return debitTransaction.getAccountName();\r\n        } else if (creditTransaction != null) {\r\n            return creditTransaction.getAccountName();\r\n        } else {\r\n            return \"Unknown\";\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/model/JournalEntry.java b/model/JournalEntry.java
+--- a/model/JournalEntry.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/model/JournalEntry.java	(date 1759875771572)
+@@ -79,4 +79,4 @@
+             return "Unknown";
+         }
+     }
+-}
+\ No newline at end of file
++}
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># \uD83E\uDDFE Java Accounting System – Double Entry Journal (OOP Project)\r\n\r\nThis is a beginner-to-intermediate Java project that simulates a simple **double-entry accounting system**. It lets you create journal entries, view/filter them, and print key financial reports (Trial Balance, General Ledger, Income Statement) using clean OOP design.\r\n\r\n---\r\n\r\n## \uD83D\uDCCC Features\r\n- ✅ Create debit & credit journal entries\r\n- ✅ Validate date, amount, and names\r\n- ✅ Filter entries by Status, Creator, and Minimum Amount\r\n- ✅ Display all entries clearly\r\n- ✅ **Trial Balance** with totals + balanced check (debit = credit)\r\n- ✅ **General Ledger** per account with running balances (sorted by date)\r\n- ✅ **View a single account’s ledger** (drill-down)\r\n- ✅ **Income Statement (NEW)**: choose a date range, classify accounts (Revenue, Expense, Contra-Revenue), handle debit/credit signs correctly, sum totals, and compute Net Income\r\n- ✅ Menu-based console UI\r\n\r\n---\r\n\r\n## \uD83D\uDEE0\uFE0F Tech Stack\r\n- Language: **Java**\r\n- IDE: **IntelliJ IDEA**\r\n- Paradigm: **Object-Oriented Programming (OOP)**\r\n\r\n---\r\n\r\n## \uD83E\uDDE0 OOP Principles Used\r\n| Principle        | Description                                                                 |\r\n|------------------|-----------------------------------------------------------------------------|\r\n| **Abstraction**  | `BalanceCalculator` is an interface implemented by `TrialBalanceCalculator` |\r\n| **Inheritance**  | `DebitTransaction` and `CreditTransaction` inherit from `Transaction`       |\r\n| **Encapsulation**| Model fields are private with getters/setters                               |\r\n| **Polymorphism** | Calculators can be swapped via the `BalanceCalculator` interface            |\r\n\r\n---\r\n\r\n## \uD83D\uDCD8 General Ledger (Running Balances)\r\n`GeneralLedger` builds a ledger per account, sorts by date, and computes a running balance line-by-line.\r\n\r\n**What it does:**\r\n- Expands each `JournalEntry` (debit = +, credit = −)\r\n- Groups by account and sorts by date (stable tiebreak by transaction ID)\r\n- Prints **Debit / Credit / Balance** with neat columns\r\n- Shows totals + closing balance for each account\r\n\r\n**Supports:**\r\n- `printAll()` – all accounts\r\n- `printAccount(\"Cash\")` – a single account\r\n- `getAccounts()` – list of accounts\r\n- `getFinalBalance(\"Cash\")` – closing balance\r\n\r\n---\r\n\r\n## \uD83D\uDCC8 Income Statement (NEW)\r\nThe Income Statement aggregates **Revenues − Expenses = Net Income** over a date range.\r\n\r\n**How it works:**\r\n- Includes only **approved** entries within `[from, to]`\r\n- Classifies accounts via a small Chart of Accounts (`Map<String, AccountType>`) + smart fallbacks (`inferType`)\r\n- Handles **Contra-Revenue** correctly (e.g., Sales Returns/Allowances/Discounts reduce total revenue)\r\n- Applies proper debit/credit sign rules per account type\r\n- Uses `BigDecimal` with scale 2 and **HALF_UP** rounding\r\n- Renders a clean console report (sorted alphabetically)\r\n\r\n**Key Classes:**\r\n- `AccountType` (enum): `REVENUE, EXPENSE, CONTRA_REVENUE, OTHER`\r\n- `IncomeStatement`: immutable data model (from/to, revenues, expenses, totals, net income, ignored accounts)\r\n- `IncomeStatementService`: builds the statement from `List<JournalEntry>` using chart + fallbacks\r\n- `IncomeStatementRenderer`: prints a tidy report to console\r\n\r\n**Menu Integration:**  \r\nChoose **option 7** to generate the Income Statement, enter a date range, and the report will display Revenues, Expenses, Totals, Net Income, and any ignored (non P&L) accounts.\r\n\r\n### ✅ Example Output\r\nIncome Statement  \r\nFor the period: 2025-08-01 to 2025-08-31  \r\n==================================================  \r\nRevenues  \r\nService Revenue                 1000.00  \r\nTotal Revenues                  1000.00\r\n\r\nExpenses  \r\nRent Expense                     200.00  \r\nTotal Expenses                   200.00\r\n\r\nNet Income                        800.00\r\n==================================================  \r\nNote: Ignored (not revenue/expense): Owner's Capital, Cash\r\n\r\n---\r\n\r\n## \uD83D\uDDC2\uFE0F Class Structure\r\n| Class                    | Responsibility                                                              |\r\n|--------------------------|------------------------------------------------------------------------------|\r\n| `Main`                   | User interface: menu, input, and interaction                                |\r\n| `JournalEntry`           | Combines debit & credit into one accounting unit                            |\r\n| `Transaction`            | Abstract class for shared debit/credit behavior                             |\r\n| `DebitTransaction`       | Inherits from `Transaction`, represents debit side                          |\r\n| `CreditTransaction`      | Inherits from `Transaction`, represents credit side                         |\r\n| `UnifiedJournalManager`  | Stores, displays, and filters journal entries                               |\r\n| `GeneralLedger`          | Builds and prints ledger with running balances                              |\r\n| `IncomeStatement`        | Immutable model for income statement data                                   |\r\n| `IncomeStatementService` | Business logic for classifying accounts and computing revenues/expenses     |\r\n| `IncomeStatementRenderer`| Console output for income statement                                         |\r\n| `InputValidator`         | Validates user input                                                        |\r\n| `BalanceCalculator`      | Interface defining trial balance contract (abstraction)                     |\r\n| `TrialBalanceCalculator` | Implements balance logic for trial balance                                  |\r\n| `ReportPrinter`          | Prints the trial balance using any `BalanceCalculator` implementation       |\r\n| `LedgerManager` (legacy) | Old, simple grouped view (kept for reference; not used by `Main`)           |\r\n\r\n---\r\n\r\n## \uD83E\uDDEA Sample Menu (Console)\r\n\uD83D\uDCCB Journal Entry System\r\n1. ➕ Add Entry\r\n2. \uD83D\uDCD8 Display All Entries\r\n3. \uD83D\uDD0D Filter by Status + Creator + Min Amount\r\n4. \uD83E\uDDFE Generate Trial Balance Report\r\n5. \uD83D\uDCD2 Generate General Ledger (all accounts)\r\n6. \uD83D\uDCC4 View Single Account Ledger\r\n7. \uD83D\uDCC8 Generate Income Statement\r\n0. ❌ Exit\r\n\r\n---\r\n\r\n## \uD83D\uDCCE Author\r\n**Jawad Berjawi**  \r\nGitHub: [github.com/jawadberjawi](https://github.com/jawadberjawi)  \r\nLinkedIn: [linkedin.com/in/jawad-berjawi-8558ab370](https://www.linkedin.com/in/jawad-berjawi-8558ab370)\r\n\r\n---\r\n\r\n## ✅ Status\r\nThis project is part of a larger **Java Accounting System** being built step-by-step. Next phases: **Spring Boot**, **SQL (PostgreSQL + H2)**, REST APIs, clean architecture, and basic tests.\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+--- a/README.md	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/README.md	(date 1761835434824)
+@@ -1,26 +1,65 @@
+ # 🧾 Java Accounting System – Double Entry Journal (OOP Project)
+ 
+-This is a beginner-to-intermediate Java project that simulates a simple **double-entry accounting system**. It lets you create journal entries, view/filter them, and print key financial reports (Trial Balance, General Ledger, Income Statement) using clean OOP design.
++This is a beginner-to-intermediate Java project that simulates a simple **double-entry accounting system**. It lets you create journal entries, view/filter them, and print key financial reports (**Trial Balance**, **General Ledger**, **Income Statement**, **Balance Sheet**) using clean OOP design.
+ 
+ ---
+ 
+ ## 📌 Features
+-- ✅ Create debit & credit journal entries
+-- ✅ Validate date, amount, and names
+-- ✅ Filter entries by Status, Creator, and Minimum Amount
+-- ✅ Display all entries clearly
+-- ✅ **Trial Balance** with totals + balanced check (debit = credit)
+-- ✅ **General Ledger** per account with running balances (sorted by date)
+-- ✅ **View a single account’s ledger** (drill-down)
+-- ✅ **Income Statement (NEW)**: choose a date range, classify accounts (Revenue, Expense, Contra-Revenue), handle debit/credit signs correctly, sum totals, and compute Net Income
+-- ✅ Menu-based console UI
++- ✅ Create debit & credit journal entries  
++- ✅ Validate date, amount, and names  
++- ✅ Filter entries by Status, Creator, and Minimum Amount  
++- ✅ Display all entries clearly  
++- ✅ **Trial Balance** with totals + balanced check (debit = credit)  
++- ✅ **General Ledger** per account with running balances (sorted by date)  
++- ✅ **View a single account’s ledger** (drill-down)  
++- ✅ **Income Statement**: choose a date range, classify accounts, handle debit/credit signs correctly, and compute Net Income  
++- ✅ **Balance Sheet (NEW)**: shows Assets, Liabilities, and Equity (including Retained Earnings / Net Income) as of a chosen date  
++- ✅ Menu-based console UI  
+ 
+ ---
+ 
+-## 🛠️ Tech Stack
+-- Language: **Java**
+-- IDE: **IntelliJ IDEA**
+-- Paradigm: **Object-Oriented Programming (OOP)**
++## 🧾 Balance Sheet (NEW)
++The Balance Sheet provides a snapshot of the company’s financial position **as of a specific date**, showing **Assets**, **Liabilities**, and **Equity**.  
++It automatically includes the **Net Income** (from the Income Statement) under **Retained Earnings / Net Income**.
++
++**How it works:**
++- Filters all approved journal entries up to the selected "as of" date  
++- Rebuilds account balances using the `GeneralLedger`  
++- Classifies each account as **Asset**, **Liability**, or **Equity** using a chart of accounts + smart inference  
++- Integrates **Net Income** from the Income Statement (Jan 1 → as of date)  
++- Displays totals and checks whether the Balance Sheet is balanced (Assets = Liabilities + Equity)
++
++**Key Classes:**
++- `BalanceSheet`: immutable model representing financial position as of a date  
++- `BalanceSheetService`: builds the balance sheet from all journal entries and the income statement  
++- `BalanceSheetRenderer`: prints a neat formatted report with totals and balance validation  
++
++**Menu Integration:**  
++Choose **option 8** to generate a Balance Sheet and specify the **“As of” date**.
++
++### ✅ Example Output
++BALANCE SHEET (As of 2025-10-30)
++==================================================
++ASSETS
++Cash                          10000.00
++Equipment                      5000.00
++Total ASSETS                  15000.00
++
++LIABILITIES
++Accounts Payable               3000.00
++Total LIABILITIES              3000.00
++
++EQUITY
++Owner's Capital               10000.00
++Retained Earnings / Net Income 2000.00
++Total EQUITY                  12000.00
++
++--------------------------------------------------
++Total Assets                  15000.00
++Total Liabilities + Equity    15000.00
++✅ Balanced
++==================================================
++
+ 
+ ---
+ 
+@@ -44,14 +83,14 @@
+ - Shows totals + closing balance for each account
+ 
+ **Supports:**
+-- `printAll()` – all accounts
+-- `printAccount("Cash")` – a single account
+-- `getAccounts()` – list of accounts
+-- `getFinalBalance("Cash")` – closing balance
++- `printAll()` – all accounts  
++- `printAccount("Cash")` – a single account  
++- `getAccounts()` – list of accounts  
++- `getFinalBalance("Cash")` – closing balance  
+ 
+ ---
+ 
+-## 📈 Income Statement (NEW)
++## 📈 Income Statement
+ The Income Statement aggregates **Revenues − Expenses = Net Income** over a date range.
+ 
+ **How it works:**
+@@ -71,65 +110,61 @@
+ **Menu Integration:**  
+ Choose **option 7** to generate the Income Statement, enter a date range, and the report will display Revenues, Expenses, Totals, Net Income, and any ignored (non P&L) accounts.
+ 
+-### ✅ Example Output
+-Income Statement  
+-For the period: 2025-08-01 to 2025-08-31  
+-==================================================  
+-Revenues  
+-Service Revenue                 1000.00  
+-Total Revenues                  1000.00
+-
+-Expenses  
+-Rent Expense                     200.00  
+-Total Expenses                   200.00
+-
+-Net Income                        800.00
+-==================================================  
+-Note: Ignored (not revenue/expense): Owner's Capital, Cash
+-
+ ---
+ 
+ ## 🗂️ Class Structure
+-| Class                    | Responsibility                                                              |
+-|--------------------------|------------------------------------------------------------------------------|
+-| `Main`                   | User interface: menu, input, and interaction                                |
+-| `JournalEntry`           | Combines debit & credit into one accounting unit                            |
+-| `Transaction`            | Abstract class for shared debit/credit behavior                             |
+-| `DebitTransaction`       | Inherits from `Transaction`, represents debit side                          |
+-| `CreditTransaction`      | Inherits from `Transaction`, represents credit side                         |
+-| `UnifiedJournalManager`  | Stores, displays, and filters journal entries                               |
+-| `GeneralLedger`          | Builds and prints ledger with running balances                              |
+-| `IncomeStatement`        | Immutable model for income statement data                                   |
+-| `IncomeStatementService` | Business logic for classifying accounts and computing revenues/expenses     |
+-| `IncomeStatementRenderer`| Console output for income statement                                         |
+-| `InputValidator`         | Validates user input                                                        |
+-| `BalanceCalculator`      | Interface defining trial balance contract (abstraction)                     |
+-| `TrialBalanceCalculator` | Implements balance logic for trial balance                                  |
+-| `ReportPrinter`          | Prints the trial balance using any `BalanceCalculator` implementation       |
+-| `LedgerManager` (legacy) | Old, simple grouped view (kept for reference; not used by `Main`)           |
++| Class                        | Responsibility                                                             |
++|------------------------------|------------------------------------------------------------------------------|
++| `Main`                       | User interface: menu, input, and interaction                                |
++| `JournalEntry`               | Combines debit & credit into one accounting unit                            |
++| `Transaction`                | Abstract class for shared debit/credit behavior                             |
++| `DebitTransaction`           | Inherits from `Transaction`, represents debit side                          |
++| `CreditTransaction`          | Inherits from `Transaction`, represents credit side                         |
++| `UnifiedJournalManager`      | Stores, displays, and filters journal entries                               |
++| `GeneralLedger`              | Builds and prints ledger with running balances                              |
++| `IncomeStatement`            | Immutable model for income statement data                                   |
++| `IncomeStatementService`     | Business logic for classifying accounts and computing revenues/expenses     |
++| `IncomeStatementRenderer`    | Console output for income statement                                         |
++| `BalanceSheet`               | Immutable model representing financial position as of a date                |
++| `BalanceSheetService`        | Builds balance sheet using ledger balances + net income integration         |
++| `BalanceSheetRenderer`       | Renders a formatted balance sheet to console                                |
++| `InputValidator`             | Validates user input                                                        |
++| `BalanceCalculator`          | Interface defining trial balance contract (abstraction)                     |
++| `TrialBalanceCalculator`     | Implements balance logic for trial balance                                  |
++| `ReportPrinter`              | Prints the trial balance using any `BalanceCalculator` implementation       |
++| `LedgerManager` (legacy)     | Old grouped view kept for reference                                         |
+ 
+ ---
+ 
+ ## 🧪 Sample Menu (Console)
+-📋 Journal Entry System
+-1. ➕ Add Entry
+-2. 📘 Display All Entries
+-3. 🔍 Filter by Status + Creator + Min Amount
+-4. 🧾 Generate Trial Balance Report
+-5. 📒 Generate General Ledger (all accounts)
+-6. 📄 View Single Account Ledger
+-7. 📈 Generate Income Statement
+-0. ❌ Exit
++📋 Journal Entry System  
++1. ➕ Add Entry  
++2. 📘 Display All Entries  
++3. 🔍 Filter by Status + Creator + Min Amount  
++4. 🧾 Generate Trial Balance Report  
++5. 📒 Generate General Ledger (all accounts)  
++6. 📄 View Single Account Ledger  
++7. 📈 Generate Income Statement  
++8. 🧾 Generate Balance Sheet  
++0. ❌ Exit  
+ 
+ ---
+ 
++## 🛠️ Tech Stack
++- Language: **Java**  
++- IDE: **IntelliJ IDEA**  
++- Paradigm: **Object-Oriented Programming (OOP)**  
++
++---
++
+ ## 📎 Author
+ **Jawad Berjawi**  
+ GitHub: [github.com/jawadberjawi](https://github.com/jawadberjawi)  
+-LinkedIn: [linkedin.com/in/jawad-berjawi-8558ab370](https://www.linkedin.com/in/jawad-berjawi-8558ab370)
++LinkedIn: [linkedin.com/in/jawad-berjawi-8558ab370](https://linkedin.com/in/jawad-berjawi-8558ab370)
+ 
+ ---
+ 
+ ## ✅ Status
+-This project is part of a larger **Java Accounting System** being built step-by-step. Next phases: **Spring Boot**, **SQL (PostgreSQL + H2)**, REST APIs, clean architecture, and basic tests.
++This project is part of a larger **Java Accounting System** being built step-by-step.  
++Next phases: **Spring Boot**, **SQL (PostgreSQL + H2)**, **REST APIs**, clean architecture, and basic tests.
+ 
+Index: services/ReportPrinter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package services;\r\n\r\nimport java.util.List;\r\nimport model.JournalEntry;\r\n\r\n/**\r\n * \uD83D\uDD39 OOP: Uses interface reference → Polymorphism\r\n * \uD83D\uDD39 Constructor receives dependency → Dependency Injection\r\n * \uD83D\uDD39 This class only prints → SRP (Single Responsibility Principle)\r\n * \uD83D\uDD39 Supports any calculator → Open/Closed Principle\r\n */\r\npublic class ReportPrinter {\r\n\r\n    private BalanceCalculator calculator;\r\n\r\n    // ✅ Constructor with dependency injection\r\n    public ReportPrinter(BalanceCalculator calculator) {\r\n        this.calculator = calculator;\r\n    }\r\n\r\n    // ✅ Method to trigger the report logic\r\n    public void printReport(List<JournalEntry> entries) {\r\n        calculator.calculate(entries);\r\n        calculator.displayResult();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/services/ReportPrinter.java b/services/ReportPrinter.java
+--- a/services/ReportPrinter.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/services/ReportPrinter.java	(date 1758232663997)
+@@ -20,7 +20,7 @@
+ 
+     // ✅ Method to trigger the report logic
+     public void printReport(List<JournalEntry> entries) {
+-        calculator.calculate(entries);
+-        calculator.displayResult();
++        calculator.calculate(entries);   // Perform the calculation
++        calculator.displayResult();      // Print the result
+     }
+ }
+Index: model/IncomeStatement.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\nimport java.math.BigDecimal;\r\nimport java.time.LocalDate;\r\nimport java.util.*;\r\n\r\npublic final class IncomeStatement {\r\n    private final LocalDate from;\r\n    private final LocalDate to;\r\n    private final Map<String, BigDecimal> revenues;   // alphabetical order ready\r\n    private final Map<String, BigDecimal> expenses;   // alphabetical order ready\r\n    private final BigDecimal totalRevenues;           // net (after contra)\r\n    private final BigDecimal totalExpenses;\r\n    private final BigDecimal netIncome;\r\n    private final List<String> ignoredAccounts;       // non Rev/Exp accounts seen\r\n\r\n    public IncomeStatement(\r\n            LocalDate from,\r\n            LocalDate to,\r\n            Map<String, BigDecimal> revenues,\r\n            Map<String, BigDecimal> expenses,\r\n            BigDecimal totalRevenues,\r\n            BigDecimal totalExpenses,\r\n            BigDecimal netIncome,\r\n            List<String> ignoredAccounts\r\n    ) {\r\n        this.from = from;\r\n        this.to = to;\r\n        this.revenues = Collections.unmodifiableMap(new LinkedHashMap<>(revenues));\r\n        this.expenses = Collections.unmodifiableMap(new LinkedHashMap<>(expenses));\r\n        this.totalRevenues = totalRevenues;\r\n        this.totalExpenses = totalExpenses;\r\n        this.netIncome = netIncome;\r\n        this.ignoredAccounts = List.copyOf(ignoredAccounts);\r\n    }\r\n\r\n    public LocalDate getFrom() { return from; }\r\n    public LocalDate getTo() { return to; }\r\n    public Map<String, BigDecimal> getRevenues() { return revenues; }\r\n    public Map<String, BigDecimal> getExpenses() { return expenses; }\r\n    public BigDecimal getTotalRevenues() { return totalRevenues; }\r\n    public BigDecimal getTotalExpenses() { return totalExpenses; }\r\n    public BigDecimal getNetIncome() { return netIncome; }\r\n    public List<String> getIgnoredAccounts() { return ignoredAccounts; }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/model/IncomeStatement.java b/model/IncomeStatement.java
+--- a/model/IncomeStatement.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/model/IncomeStatement.java	(date 1761315734412)
+@@ -2,17 +2,21 @@
+ 
+ import java.math.BigDecimal;
+ import java.time.LocalDate;
+-import java.util.*;
++import java.util.Collections;
++import java.util.LinkedHashMap;
++import java.util.List;
++import java.util.Map;
+ 
+ public final class IncomeStatement {
++
+     private final LocalDate from;
+     private final LocalDate to;
+-    private final Map<String, BigDecimal> revenues;   // alphabetical order ready
+-    private final Map<String, BigDecimal> expenses;   // alphabetical order ready
+-    private final BigDecimal totalRevenues;           // net (after contra)
++    private final Map<String, BigDecimal> revenues;    // alphabetical order ready
++    private final Map<String, BigDecimal> expenses;    // alphabetical order ready
++    private final BigDecimal totalRevenues;            // net (after contra)
+     private final BigDecimal totalExpenses;
+     private final BigDecimal netIncome;
+-    private final List<String> ignoredAccounts;       // non Rev/Exp accounts seen
++    private final List<String> ignoredAccounts;        // non Rev/Exp accounts seen
+ 
+     public IncomeStatement(
+             LocalDate from,
+@@ -34,12 +38,35 @@
+         this.ignoredAccounts = List.copyOf(ignoredAccounts);
+     }
+ 
+-    public LocalDate getFrom() { return from; }
+-    public LocalDate getTo() { return to; }
+-    public Map<String, BigDecimal> getRevenues() { return revenues; }
+-    public Map<String, BigDecimal> getExpenses() { return expenses; }
+-    public BigDecimal getTotalRevenues() { return totalRevenues; }
+-    public BigDecimal getTotalExpenses() { return totalExpenses; }
+-    public BigDecimal getNetIncome() { return netIncome; }
+-    public List<String> getIgnoredAccounts() { return ignoredAccounts; }
++    public LocalDate getFrom() {
++        return from;
++    }
++
++    public LocalDate getTo() {
++        return to;
++    }
++
++    public Map<String, BigDecimal> getRevenues() {
++        return revenues;
++    }
++
++    public Map<String, BigDecimal> getExpenses() {
++        return expenses;
++    }
++
++    public BigDecimal getTotalRevenues() {
++        return totalRevenues;
++    }
++
++    public BigDecimal getTotalExpenses() {
++        return totalExpenses;
++    }
++
++    public BigDecimal getNetIncome() {
++        return netIncome;
++    }
++
++    public List<String> getIgnoredAccounts() {
++        return ignoredAccounts;
++    }
+ }
+Index: model/Transaction.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\n// \uD83D\uDD39 Abstract base class for all types of transactions (like Debit or Credit)\r\npublic abstract class Transaction {\r\n\r\n    // \uD83D\uDD39 Private fields (Encapsulation)\r\n    private String accountName;\r\n    private double amount;\r\n\r\n    // \uD83D\uDD39 Constructor to set account name and amount when creating a transaction\r\n    public Transaction(String accountName, double amount) {\r\n        this.accountName = accountName;\r\n        this.amount = amount;\r\n    }\r\n\r\n    // \uD83D\uDD39 Getter methods to access private fields\r\n    public String getAccountName() {\r\n        return accountName;\r\n    }\r\n\r\n    public double getAmount() {\r\n        return amount;\r\n    }\r\n\r\n    // \uD83D\uDD39 Abstract method to be implemented by child classes\r\n    public abstract void display();\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/model/Transaction.java b/model/Transaction.java
+--- a/model/Transaction.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/model/Transaction.java	(date 1759874123601)
+@@ -24,6 +24,4 @@
+ 
+     // 🔹 Abstract method to be implemented by child classes
+     public abstract void display();
+-
+ }
+-
+Index: services/IncomeStatementService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package services;\r\n\r\nimport model.*;\r\nimport model.CreditTransaction;\r\nimport model.DebitTransaction;\r\nimport model.JournalEntry;\r\n\r\nimport java.math.BigDecimal;\r\nimport java.math.RoundingMode;\r\nimport java.time.LocalDate;\r\nimport java.util.*;\r\n\r\n/**\r\n * Builds an Income Statement from your JournalEntry list (no changes to existing code).\r\n * - Includes only approved entries within [from, to]\r\n * - Classifies accounts via a small chart + fallbacks\r\n * - Applies correct debit/credit logic by account type\r\n */\r\npublic class IncomeStatementService {\r\n    private final Map<String, AccountType> chart; // normalized name -> type\r\n\r\n    public IncomeStatementService(Map<String, AccountType> chartOfAccounts) {\r\n        this.chart = new HashMap<>();\r\n        if (chartOfAccounts != null) {\r\n            for (var e : chartOfAccounts.entrySet()) {\r\n                this.chart.put(normalize(e.getKey()), e.getValue());\r\n            }\r\n        }\r\n        // Sensible defaults (only if not provided)\r\n        addDefaultIfMissing(\"service revenue\", AccountType.REVENUE);\r\n        addDefaultIfMissing(\"sales revenue\", AccountType.REVENUE);\r\n        addDefaultIfMissing(\"interest income\", AccountType.REVENUE);\r\n        addDefaultIfMissing(\"sales returns\", AccountType.CONTRA_REVENUE);\r\n        addDefaultIfMissing(\"sales allowances\", AccountType.CONTRA_REVENUE);\r\n        addDefaultIfMissing(\"sales discounts\", AccountType.CONTRA_REVENUE);\r\n        addDefaultIfMissing(\"rent expense\", AccountType.EXPENSE);\r\n        addDefaultIfMissing(\"salaries expense\", AccountType.EXPENSE);\r\n        addDefaultIfMissing(\"utilities expense\", AccountType.EXPENSE);\r\n        addDefaultIfMissing(\"depreciation expense\", AccountType.EXPENSE);\r\n        addDefaultIfMissing(\"cogs\", AccountType.EXPENSE);\r\n        addDefaultIfMissing(\"cost of goods sold\", AccountType.EXPENSE);\r\n    }\r\n\r\n    private void addDefaultIfMissing(String name, AccountType type) {\r\n        this.chart.putIfAbsent(normalize(name), type);\r\n    }\r\n\r\n    public IncomeStatement generate(List<JournalEntry> allEntries, LocalDate from, LocalDate to) {\r\n        if (allEntries == null) allEntries = Collections.emptyList();\r\n        if (from == null || to == null) throw new IllegalArgumentException(\"from/to dates are required\");\r\n\r\n        Map<String, BigDecimal> revenueLines = new HashMap<>();\r\n        Map<String, BigDecimal> expenseLines = new HashMap<>();\r\n        Set<String> unknowns = new TreeSet<>();\r\n\r\n        for (JournalEntry e : allEntries) {\r\n            if (e == null) continue;\r\n            if (!\"approved\".equalsIgnoreCase(safe(e.getStatus()))) continue;\r\n\r\n            LocalDate d = e.getDate();\r\n            if (d == null || d.isBefore(from) || d.isAfter(to)) continue;\r\n\r\n            // Debit line\r\n            DebitTransaction dt = e.getDebitTransaction();\r\n            if (dt != null && dt.getAccountName() != null) {\r\n                classifyAndAccumulate(dt.getAccountName(), bd(dt.getAmount()), true, revenueLines, expenseLines, unknowns);\r\n            }\r\n\r\n            // Credit line\r\n            CreditTransaction ct = e.getCreditTransaction();\r\n            if (ct != null && ct.getAccountName() != null) {\r\n                classifyAndAccumulate(ct.getAccountName(), bd(ct.getAmount()), false, revenueLines, expenseLines, unknowns);\r\n            }\r\n        }\r\n\r\n        BigDecimal totalRevenues = sum(revenueLines.values());\r\n        BigDecimal totalExpenses = sum(expenseLines.values());\r\n        BigDecimal netIncome = totalRevenues.subtract(totalExpenses);\r\n\r\n        Map<String, BigDecimal> revSorted = new TreeMap<>(revenueLines);\r\n        Map<String, BigDecimal> expSorted = new TreeMap<>(expenseLines);\r\n\r\n        return new IncomeStatement(\r\n                from,\r\n                to,\r\n                revSorted,\r\n                expSorted,\r\n                totalRevenues.setScale(2, RoundingMode.HALF_UP),\r\n                totalExpenses.setScale(2, RoundingMode.HALF_UP),\r\n                netIncome.setScale(2, RoundingMode.HALF_UP),\r\n                new ArrayList<>(unknowns)\r\n        );\r\n    }\r\n\r\n    private void classifyAndAccumulate(\r\n            String rawAccount,\r\n            BigDecimal amount,\r\n            boolean isDebit,\r\n            Map<String, BigDecimal> revenueLines,\r\n            Map<String, BigDecimal> expenseLines,\r\n            Set<String> unknowns\r\n    ) {\r\n        String normalized = normalize(rawAccount);\r\n        AccountType type = chart.getOrDefault(normalized, inferType(normalized));\r\n\r\n        switch (type) {\r\n            case REVENUE: {\r\n                // Credit increases revenue (+), Debit decreases (−)\r\n                BigDecimal signed = isDebit ? amount.negate() : amount;\r\n                merge(revenueLines, displayName(rawAccount), signed);\r\n                break;\r\n            }\r\n            case CONTRA_REVENUE: {\r\n                // Treat contra-revenue as negative revenue overall\r\n                BigDecimal signed = isDebit ? amount : amount.negate();\r\n                merge(revenueLines, displayName(rawAccount), signed.negate()); // subtract from total revenues\r\n                break;\r\n            }\r\n            case EXPENSE: {\r\n                // Debit increases expense (+), Credit decreases (−)\r\n                BigDecimal signed = isDebit ? amount : amount.negate();\r\n                merge(expenseLines, displayName(rawAccount), signed);\r\n                break;\r\n            }\r\n            case OTHER:\r\n            default:\r\n                unknowns.add(displayName(rawAccount));\r\n        }\r\n    }\r\n\r\n    private static void merge(Map<String, BigDecimal> map, String key, BigDecimal delta) {\r\n        map.merge(key, delta, BigDecimal::add);\r\n    }\r\n\r\n    private static BigDecimal sum(Collection<BigDecimal> values) {\r\n        BigDecimal t = BigDecimal.ZERO;\r\n        for (BigDecimal v : values) t = t.add(v);\r\n        return t;\r\n    }\r\n\r\n    private static String normalize(String s) {\r\n        if (s == null) return \"\";\r\n        String t = s.trim().toLowerCase();\r\n        t = t.replaceAll(\"\\\\s+\", \" \");\r\n        t = t.replace('–', '-');\r\n        return t;\r\n    }\r\n\r\n    private static String displayName(String s) {\r\n        return s == null ? \"\" : s.trim();\r\n    }\r\n\r\n    private static String safe(String s) {\r\n        return s == null ? \"\" : s;\r\n    }\r\n\r\n    private static BigDecimal bd(double d) {\r\n        return BigDecimal.valueOf(d).setScale(2, RoundingMode.HALF_UP);\r\n    }\r\n\r\n    /** Fallback naming rules when not found in chart */\r\n    private static AccountType inferType(String name) {\r\n        if (name.endsWith(\"expense\")) return AccountType.EXPENSE;\r\n        if (name.equals(\"cogs\") || name.contains(\"cost of goods sold\")) return AccountType.EXPENSE;\r\n        if (name.endsWith(\"revenue\")) return AccountType.REVENUE;\r\n        if (name.contains(\"income\") && !name.contains(\"expense\")) return AccountType.REVENUE;\r\n        if (name.contains(\"sales\") && (name.contains(\"return\") || name.contains(\"allowance\") || name.contains(\"discount\"))) {\r\n            return AccountType.CONTRA_REVENUE;\r\n        }\r\n        return AccountType.OTHER;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/services/IncomeStatementService.java b/services/IncomeStatementService.java
+--- a/services/IncomeStatementService.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/services/IncomeStatementService.java	(date 1761486514733)
+@@ -107,24 +107,24 @@
+             case REVENUE: {
+                 // Credit increases revenue (+), Debit decreases (−)
+                 BigDecimal signed = isDebit ? amount.negate() : amount;
+-                merge(revenueLines, displayName(rawAccount), signed);
++                merge(revenueLines, normalized , signed);
+                 break;
+             }
+             case CONTRA_REVENUE: {
+                 // Treat contra-revenue as negative revenue overall
+                 BigDecimal signed = isDebit ? amount : amount.negate();
+-                merge(revenueLines, displayName(rawAccount), signed.negate()); // subtract from total revenues
++                merge(revenueLines, normalized, signed.negate()); // subtract from total revenues
+                 break;
+             }
+             case EXPENSE: {
+                 // Debit increases expense (+), Credit decreases (−)
+                 BigDecimal signed = isDebit ? amount : amount.negate();
+-                merge(expenseLines, displayName(rawAccount), signed);
++                merge(expenseLines, normalized, signed);
+                 break;
+             }
+             case OTHER:
+             default:
+-                unknowns.add(displayName(rawAccount));
++                unknowns.add(normalized);
+         }
+     }
+ 
+Index: model/DebitTransaction.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\npublic class DebitTransaction extends Transaction{\r\n    public DebitTransaction(String accountName, double amount){\r\n        super(accountName,amount);\r\n    }\r\n    @Override\r\n    public void display(){\r\n        System.out.println(\"Account Name : \" +getAccountName());\r\n        System.out.println(\"Debit Amount : \" +getAmount());\r\n        System.out.println(\"----------------------------\");\r\n\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/model/DebitTransaction.java b/model/DebitTransaction.java
+--- a/model/DebitTransaction.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/model/DebitTransaction.java	(date 1759874656996)
+@@ -1,15 +1,15 @@
+ package model;
+ 
+-public class DebitTransaction extends Transaction{
+-    public DebitTransaction(String accountName, double amount){
+-        super(accountName,amount);
++public class DebitTransaction extends Transaction {
++
++    public DebitTransaction(String accountName, double amount) {
++        super(accountName, amount);
+     }
++
+     @Override
+-    public void display(){
+-        System.out.println("Account Name : " +getAccountName());
+-        System.out.println("Debit Amount : " +getAmount());
++    public void display() {
++        System.out.println("Account Name : " + getAccountName());
++        System.out.println("Debit Amount : " + getAmount());
+         System.out.println("----------------------------");
+-
+     }
+ }
+-
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_24\" default=\"true\" project-jdk-name=\"openjdk-24\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/.idea/misc.xml	(date 1757670736338)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_24" default="true" project-jdk-name="openjdk-24" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/out" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: main/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package main;\r\n\r\nimport model.*;\r\nimport manager.UnifiedJournalManager;\r\nimport services.BalanceCalculator;\r\nimport services.ReportPrinter;\r\nimport services.TrialBalanceCalculator;\r\nimport services.GeneralLedger;\r\nimport services.IncomeStatementService;\r\nimport services.IncomeStatementRenderer;\r\nimport utils.InputValidator;\r\n\r\nimport java.time.LocalDate;\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\nimport java.util.Scanner;\r\n\r\npublic class Main {\r\n    public static void main(String[] args) {\r\n        ArrayList<JournalEntry> entries = new ArrayList<>();\r\n        UnifiedJournalManager manager = new UnifiedJournalManager(entries);\r\n        GeneralLedger generalLedger = new GeneralLedger();\r\n        Scanner scanner = new Scanner(System.in);\r\n\r\n        while (true) {\r\n            displayMenu();\r\n            int choice = getUserChoice(scanner);\r\n\r\n            switch (choice) {\r\n                case 1:\r\n                    addJournalEntry(scanner, manager);\r\n                    break;\r\n                case 2:\r\n                    manager.displayAllEntries();\r\n                    break;\r\n                case 3:\r\n                    manager.filterByMultipleCriteria(scanner);\r\n                    break;\r\n                case 4:\r\n                    generateTrialBalanceReport(entries);\r\n                    break;\r\n                case 5:\r\n                    generateGeneralLedgerReport(entries, generalLedger);\r\n                    break;\r\n                case 6:\r\n                    viewSingleAccountLedger(entries, generalLedger, scanner);\r\n                    break;\r\n                case 7:\r\n                    generateIncomeStatementReport(entries, scanner);\r\n                    break;\r\n                case 0:\r\n                    System.out.println(\"\\uD83D\\uDC4B Exiting... Goodbye!\");\r\n                    return;\r\n                default:\r\n                    System.out.println(\"\\u274C Invalid choice. Try again.\");\r\n            }\r\n        }\r\n    }\r\n\r\n    private static void displayMenu() {\r\n        System.out.println(\"\\n\\uD83D\\uDCCB Journal Entry System\");\r\n        System.out.println(\"1. ➕ Add Entry\");\r\n        System.out.println(\"2. \uD83D\uDCD8 Display All Entries\");\r\n        System.out.println(\"3. \uD83D\uDD0D Filter by Status + Creator + Min Amount\");\r\n        System.out.println(\"4. \uD83E\uDDFE Generate Trial Balance Report\");\r\n        System.out.println(\"5. \uD83D\uDCD2 Generate General Ledger (all accounts)\");\r\n        System.out.println(\"6. \uD83D\uDCC4 View Single Account Ledger\");\r\n        System.out.println(\"7. \uD83D\uDCC8 Generate Income Statement\");\r\n        System.out.println(\"0. ❌ Exit\");\r\n    }\r\n\r\n    private static int getUserChoice(Scanner scanner) {\r\n        System.out.print(\"\uD83D\uDC49 Choose an option: \");\r\n        return Integer.parseInt(scanner.nextLine());\r\n    }\r\n\r\n    private static void addJournalEntry(Scanner scanner, UnifiedJournalManager manager) {\r\n        String transactionID = getTransactionID(scanner);\r\n        LocalDate date = getTransactionDate(scanner);\r\n        String debitAccount = getAccount(scanner, \"Debit\");\r\n        String creditAccount = getAccount(scanner, \"Credit\");\r\n        double amount = getTransactionAmount(scanner);\r\n        String createdBy = getCreator(scanner);\r\n        String status = getStatus(scanner);\r\n\r\n        DebitTransaction debit = new DebitTransaction(debitAccount, amount);\r\n        CreditTransaction credit = new CreditTransaction(creditAccount, amount);\r\n        JournalEntry entry = new JournalEntry(transactionID, date, debit, credit, createdBy, status);\r\n        manager.addEntry(entry);\r\n\r\n        System.out.println(\"✅ Journal Entry Added!\");\r\n    }\r\n\r\n    private static String getTransactionID(Scanner scanner) {\r\n        System.out.print(\"\uD83C\uDD94 Enter Transaction ID: \");\r\n        return scanner.nextLine();\r\n    }\r\n\r\n    private static LocalDate getTransactionDate(Scanner scanner) {\r\n        while (true) {\r\n            System.out.print(\"\uD83D\uDCC5 Enter Date (YYYY-MM-DD): \");\r\n            try {\r\n                LocalDate date = LocalDate.parse(scanner.nextLine());\r\n                if (InputValidator.isValidDate(date)) return date;\r\n                System.out.println(\"❌ Date cannot be in the future.\");\r\n            } catch (Exception e) {\r\n                System.out.println(\"❌ Invalid format. Try again.\");\r\n            }\r\n        }\r\n    }\r\n\r\n    private static String getAccount(Scanner scanner, String accountType) {\r\n        while (true) {\r\n            System.out.printf(\"\uD83C\uDFE6 Enter %s Account: \", accountType);\r\n            String account = scanner.nextLine();\r\n            if (InputValidator.isValidAccount(account)) return account;\r\n            System.out.println(\"❌ Invalid account name.\");\r\n        }\r\n    }\r\n\r\n    private static double getTransactionAmount(Scanner scanner) {\r\n        while (true) {\r\n            System.out.print(\"\uD83D\uDCB0 Enter Transaction Amount: \");\r\n            try {\r\n                double amount = Double.parseDouble(scanner.nextLine());\r\n                if (InputValidator.isValidAmount(amount)) return amount;\r\n                System.out.println(\"❌ Amount must be > 0.\");\r\n            } catch (Exception e) {\r\n                System.out.println(\"❌ Invalid amount format.\");\r\n            }\r\n        }\r\n    }\r\n\r\n    private static String getCreator(Scanner scanner) {\r\n        while (true) {\r\n            System.out.print(\"\uD83D\uDC64 Enter Created By: \");\r\n            String name = scanner.nextLine();\r\n            if (InputValidator.isValidAccount(name)) return name;\r\n            System.out.println(\"❌ Invalid name.\");\r\n        }\r\n    }\r\n\r\n    private static String getStatus(Scanner scanner) {\r\n        while (true) {\r\n            System.out.print(\"✅ Enter Status (approved/pending): \");\r\n            String status = scanner.nextLine().trim();\r\n            if (InputValidator.isValidStatus(status)) return status;\r\n            System.out.println(\"❌ Must be 'approved' or 'pending'.\");\r\n        }\r\n    }\r\n\r\n    private static void generateTrialBalanceReport(ArrayList<JournalEntry> entries) {\r\n        System.out.println(\"\uD83E\uDDFE Generating Trial Balance Report...\");\r\n        BalanceCalculator calc = new TrialBalanceCalculator();\r\n        ReportPrinter printer = new ReportPrinter(calc);\r\n        printer.printReport(entries);\r\n    }\r\n\r\n    private static void generateGeneralLedgerReport(ArrayList<JournalEntry> entries, GeneralLedger generalLedger) {\r\n        System.out.println(\"\uD83D\uDCD2 Generating General Ledger...\");\r\n        generalLedger.build(entries);\r\n        generalLedger.printAll();\r\n    }\r\n\r\n    private static void viewSingleAccountLedger(ArrayList<JournalEntry> entries, GeneralLedger generalLedger, Scanner scanner) {\r\n        generalLedger.build(entries);\r\n        System.out.print(\"\uD83D\uDD0E Enter account name: \");\r\n        String account = scanner.nextLine().trim();\r\n        generalLedger.printAccount(account);\r\n    }\r\n\r\n    // ===============================\r\n    // Income Statement Integration \uD83D\uDC47\r\n    // ===============================\r\n\r\n    private static void generateIncomeStatementReport(ArrayList<JournalEntry> entries, Scanner scanner) {\r\n        if (entries.isEmpty()) {\r\n            System.out.println(\"ℹ\uFE0F No journal entries yet. Add some entries first.\");\r\n            return;\r\n        }\r\n\r\n        System.out.println(\"\uD83D\uDCC8 Generate Income Statement\");\r\n        LocalDate from = askDate(scanner, \"From (YYYY-MM-DD)\");\r\n        LocalDate to   = askDate(scanner, \"To   (YYYY-MM-DD)\");\r\n\r\n        if (to.isBefore(from)) {\r\n            System.out.println(\"❌ 'To' date cannot be before 'From' date.\");\r\n            return;\r\n        }\r\n\r\n        // Build a simple Chart of Accounts (you can expand this any time)\r\n        Map<String, AccountType> chart = buildDefaultChart();\r\n\r\n        IncomeStatementService svc = new IncomeStatementService(chart);\r\n        var is = svc.generate(entries, from, to);\r\n\r\n        IncomeStatementRenderer.render(is);\r\n    }\r\n\r\n    private static LocalDate askDate(Scanner scanner, String label) {\r\n        while (true) {\r\n            System.out.print(\"\uD83D\uDCC5 Enter \" + label + \": \");\r\n            try {\r\n                LocalDate date = LocalDate.parse(scanner.nextLine().trim());\r\n                if (InputValidator.isValidDate(date)) return date;\r\n                System.out.println(\"❌ Date cannot be in the future.\");\r\n            } catch (Exception e) {\r\n                System.out.println(\"❌ Invalid format. Try again.\");\r\n            }\r\n        }\r\n    }\r\n\r\n    private static Map<String, AccountType> buildDefaultChart() {\r\n        Map<String, AccountType> chart = new HashMap<>();\r\n        // Revenues\r\n        chart.put(\"Service Revenue\", AccountType.REVENUE);\r\n        chart.put(\"Sales Revenue\", AccountType.REVENUE);\r\n        chart.put(\"Interest Income\", AccountType.REVENUE);\r\n        // Contra-Revenues (reduce revenue)\r\n        chart.put(\"Sales Returns\", AccountType.CONTRA_REVENUE);\r\n        chart.put(\"Sales Allowances\", AccountType.CONTRA_REVENUE);\r\n        chart.put(\"Sales Discounts\", AccountType.CONTRA_REVENUE);\r\n        // Expenses\r\n        chart.put(\"Rent Expense\", AccountType.EXPENSE);\r\n        chart.put(\"Salaries Expense\", AccountType.EXPENSE);\r\n        chart.put(\"Utilities Expense\", AccountType.EXPENSE);\r\n        chart.put(\"Depreciation Expense\", AccountType.EXPENSE);\r\n        chart.put(\"COGS\", AccountType.EXPENSE);\r\n        chart.put(\"Cost of Goods Sold\", AccountType.EXPENSE);\r\n        // You can add more here, or rely on the service's inferType() fallbacks\r\n        return chart;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/Main.java b/main/Main.java
+--- a/main/Main.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/main/Main.java	(date 1759876471857)
+@@ -53,7 +53,7 @@
+                     System.out.println("\uD83D\uDC4B Exiting... Goodbye!");
+                     return;
+                 default:
+-                    System.out.println("\u274C Invalid choice. Try again.");
++                    System.out.println(" Invalid choice. Try again.");
+             }
+         }
+     }
+Index: services/GeneralLedger.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package services;\r\n\r\nimport model.JournalEntry;\r\nimport model.DebitTransaction;\r\nimport model.CreditTransaction;\r\n\r\nimport java.math.BigDecimal;\r\nimport java.time.LocalDate;\r\nimport java.util.*;\r\n\r\n/**\r\n * General Ledger (دفتر الأستاذ) with running balances.\r\n * - build(entries): group by account, sort by date, compute running balance\r\n * - printAll(): print all accounts\r\n * - printAccount(name): print a single account\r\n * - getAccounts(): list account names (alphabetical)\r\n * - getFinalBalance(name): last running balance for account\r\n * - clear(): reset internal state\r\n *\r\n * This class is read-only over your JournalEntry list (doesn't modify entries).\r\n */\r\npublic class GeneralLedger {\r\n\r\n    // Keep accounts alphabetically ordered for nice printing.\r\n    private final Map<String, List<LedgerLine>> ledger = new TreeMap<>();\r\n\r\n    // Column width for printing amounts neatly.\r\n    private static final int WIDTH = 12;\r\n\r\n    /**\r\n     * Build (or rebuild) the general ledger structure from raw journal entries.\r\n     * Groups by account, sorts each account's lines by date, and computes running balance.\r\n     */\r\n    public void build(List<JournalEntry> entries) {\r\n        ledger.clear();\r\n        if (entries == null || entries.isEmpty()) return;\r\n\r\n        // 1) Expand entries into per-account lines (debit: +amount, credit: -amount).\r\n        for (JournalEntry e : entries) {\r\n            if (e == null) continue;\r\n\r\n            LocalDate date = e.getDate();\r\n            // Defensive: if date is null, put it last by using LocalDate.MAX for ordering later.\r\n            LocalDate safeDate = (date != null) ? date : LocalDate.MAX;\r\n\r\n            // Debit side → +amount for that account\r\n            DebitTransaction d = e.getDebitTransaction();\r\n            if (d != null && d.getAccountName() != null) {\r\n                addLine(\r\n                        d.getAccountName().trim(),\r\n                        safeDate,\r\n                        BigDecimal.valueOf(d.getAmount()),   // debit amount\r\n                        BigDecimal.ZERO,                      // credit amount\r\n                        +1,                                   // sign for delta (+)\r\n                        e                                     // reference back to entry if needed\r\n                );\r\n            }\r\n\r\n            // Credit side → -amount for that account\r\n            CreditTransaction c = e.getCreditTransaction();\r\n            if (c != null && c.getAccountName() != null) {\r\n                addLine(\r\n                        c.getAccountName().trim(),\r\n                        safeDate,\r\n                        BigDecimal.ZERO,                      // debit amount\r\n                        BigDecimal.valueOf(c.getAmount()),    // credit amount\r\n                        -1,                                   // sign for delta (−)\r\n                        e\r\n                );\r\n            }\r\n        }\r\n\r\n        // 2) Sort each account’s lines by date (and by transaction id as tiebreaker for stability).\r\n        for (Map.Entry<String, List<LedgerLine>> accountEntry : ledger.entrySet()) {\r\n            List<LedgerLine> lines = accountEntry.getValue();\r\n            lines.sort((a, b) -> {\r\n                int cmp = a.date.compareTo(b.date);\r\n                if (cmp != 0) return cmp;\r\n                // Tie-breaker: by transaction id if available (nulls last)\r\n                String ta = a.entryRef != null ? a.entryRef.getTransactionID() : null;\r\n                String tb = b.entryRef != null ? b.entryRef.getTransactionID() : null;\r\n                if (ta == null && tb == null) return 0;\r\n                if (ta == null) return 1;\r\n                if (tb == null) return -1;\r\n                return ta.compareTo(tb);\r\n            });\r\n\r\n            // 3) Compute running balance: start from zero\r\n            BigDecimal running = BigDecimal.ZERO;\r\n            for (LedgerLine line : lines) {\r\n                // delta = +debit or -credit (already applied when created)\r\n                running = running.add(line.delta);\r\n                line.runningBalance = running;\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Print the full general ledger (all accounts).\r\n     */\r\n    public void printAll() {\r\n        if (ledger.isEmpty()) {\r\n            System.out.println(\"\uD83D\uDCED General Ledger is empty.\");\r\n            return;\r\n        }\r\n\r\n        System.out.println(\"\\n\uD83D\uDCD2 General Ledger (All Accounts)\");\r\n        System.out.println(\"================================\");\r\n\r\n        for (String account : ledger.keySet()) {\r\n            printAccount(account);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Print a single account’s ledger with running balance.\r\n     */\r\n    public void printAccount(String accountName) {\r\n        List<LedgerLine> lines = ledger.get(accountName);\r\n        if (lines == null || lines.isEmpty()) {\r\n            System.out.println(\"\\nNo entries for account: \" + accountName);\r\n            return;\r\n        }\r\n\r\n        System.out.println(\"\\nAccount: \" + accountName);\r\n        System.out.println(\"Date       | Debit        | Credit       | Balance\");\r\n        System.out.println(\"---------------------------------------------------\");\r\n\r\n        for (LedgerLine line : lines) {\r\n            String date = (line.date == null || line.date.equals(LocalDate.MAX))\r\n                    ? \"N/A\"\r\n                    : line.date.toString();\r\n\r\n            String debitStr  = (line.debit.signum()  == 0) ? \"\" : fmt(line.debit);\r\n            String creditStr = (line.credit.signum() == 0) ? \"\" : fmt(line.credit);\r\n            String balStr    = fmt(line.runningBalance);\r\n\r\n            System.out.println(\r\n                    pad(date, 10) + \" | \" +\r\n                            padLeft(debitStr,  WIDTH) + \" | \" +\r\n                            padLeft(creditStr, WIDTH) + \" | \" +\r\n                            padLeft(balStr,    WIDTH)\r\n            );\r\n        }\r\n\r\n        // Totals (optional nice touch)\r\n        BigDecimal totalDebit  = BigDecimal.ZERO;\r\n        BigDecimal totalCredit = BigDecimal.ZERO;\r\n        for (LedgerLine line : lines) {\r\n            totalDebit  = totalDebit.add(line.debit);\r\n            totalCredit = totalCredit.add(line.credit);\r\n        }\r\n        System.out.println(\"---------------------------------------------------\");\r\n        System.out.println(\r\n                pad(\"Totals\", 10) + \" | \" +\r\n                        padLeft(fmt(totalDebit),  WIDTH) + \" | \" +\r\n                        padLeft(fmt(totalCredit), WIDTH) + \" | \" +\r\n                        padLeft(fmt(lines.get(lines.size()-1).runningBalance), WIDTH)\r\n        );\r\n    }\r\n\r\n    /**\r\n     * Get the list of account names (alphabetical).\r\n     */\r\n    public Set<String> getAccounts() {\r\n        return new LinkedHashSet<>(ledger.keySet());\r\n    }\r\n\r\n    /**\r\n     * Get the final (closing) running balance for an account.\r\n     */\r\n    public BigDecimal getFinalBalance(String accountName) {\r\n        List<LedgerLine> lines = ledger.get(accountName);\r\n        if (lines == null || lines.isEmpty()) return BigDecimal.ZERO;\r\n        return lines.get(lines.size() - 1).runningBalance;\r\n    }\r\n\r\n    /**\r\n     * Clear internal state (rebuild from scratch later).\r\n     */\r\n    public void clear() {\r\n        ledger.clear();\r\n    }\r\n\r\n    /* ------------------- internals ------------------- */\r\n\r\n    private void addLine(String account, LocalDate date,\r\n                         BigDecimal debit, BigDecimal credit,\r\n                         int sign, JournalEntry ref) {\r\n        // delta = +debit or -credit\r\n        BigDecimal delta = (sign > 0) ? debit : credit.negate();\r\n\r\n        List<LedgerLine> list = ledger.computeIfAbsent(account, k -> new ArrayList<>());\r\n        list.add(new LedgerLine(date, debit, credit, delta, ref));\r\n    }\r\n\r\n    // Nice 2-decimal formatting without forcing locale here.\r\n    private String fmt(BigDecimal v) {\r\n        return v.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();\r\n    }\r\n\r\n    // Simple padding helpers for console output.\r\n    private static String pad(String s, int width) {\r\n        if (s == null) s = \"\";\r\n        if (s.length() >= width) return s;\r\n        return s + \" \".repeat(width - s.length());\r\n    }\r\n    private static String padLeft(String s, int width) {\r\n        if (s == null) s = \"\";\r\n        if (s.length() >= width) return s;\r\n        return \" \".repeat(width - s.length()) + s;\r\n    }\r\n\r\n    /**\r\n     * One printed row in the General Ledger for a specific account.\r\n     * debit and credit are non-negative; delta is applied sign (+ or -).\r\n     */\r\n    private static class LedgerLine {\r\n        final LocalDate date;\r\n        final BigDecimal debit;           // >= 0\r\n        final BigDecimal credit;          // >= 0\r\n        final BigDecimal delta;           // +debit or -credit\r\n        final JournalEntry entryRef;      // reference to original entry (optional for future)\r\n        BigDecimal runningBalance;        // balance AFTER applying this line\r\n\r\n        LedgerLine(LocalDate date, BigDecimal debit, BigDecimal credit,\r\n                   BigDecimal delta, JournalEntry entryRef) {\r\n            this.date = date;\r\n            this.debit = debit;\r\n            this.credit = credit;\r\n            this.delta = delta;\r\n            this.entryRef = entryRef;\r\n            this.runningBalance = BigDecimal.ZERO;\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/services/GeneralLedger.java b/services/GeneralLedger.java
+--- a/services/GeneralLedger.java	(revision 282b9e4ed1482e94232036a54135ab16c35bb14b)
++++ b/services/GeneralLedger.java	(date 1761137058829)
+@@ -233,4 +233,4 @@
+             this.runningBalance = BigDecimal.ZERO;
+         }
+     }
+-}
++}
+\ No newline at end of file

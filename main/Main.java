@@ -59,7 +59,7 @@ public class  Main {
                     System.out.println("\uD83D\uDC4B Exiting... Goodbye!");
                     return;
                 default:
-                    System.out.println("\u274C Invalid choice. Try again.");
+                    System.out.println(" Invalid choice. Try again.");
             }
         }
     }

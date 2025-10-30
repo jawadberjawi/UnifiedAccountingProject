@@ -20,7 +20,7 @@ public class ReportPrinter {
 
     // ✅ Method to trigger the report logic
     public void printReport(List<JournalEntry> entries) {
-        calculator.calculate(entries);
-        calculator.displayResult();
+        calculator.calculate(entries);   // Perform the calculation
+        calculator.displayResult();      // Print the result
     }
 }
